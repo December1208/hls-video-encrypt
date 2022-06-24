@@ -6,7 +6,7 @@ from werkzeug.exceptions import HTTPException
 
 
 class Error:
-    pass
+    NOT_DEFINED_ERROR = (1001, "服务器开小差了，请稍后再试")
 
 
 class APIException(HTTPException):

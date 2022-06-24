@@ -1,8 +1,7 @@
 import json
 import os
-import dotenv
-from typing import Union
 
+import dotenv
 
 dotenv.load_dotenv(verbose=True)
 
@@ -64,6 +63,9 @@ class Setting(object):
     FLASK_ENV = load_setting_value('FLASK_ENV', str, 'production')
     SECRET_KEY = load_setting_value('SECRET_KEY', str, '45008b73ad9d00c01f174dddd41df6ad')
     TESTING = load_setting_value('TESTING', bool, False)
+
+    SENTRY_URI = load_setting_value('SENTRY_URI', str, '')
+
     JWT_SECRET_KEY = load_setting_value('JWT_SECRET_KEY', str, 'ddfaac4a33c94806')
     JWT_TOKEN_LOCATION = load_setting_value('JWT_TOKEN_LOCATION', list, ['headers'])
     JWT_ACCESS_TOKEN_EXPIRES = load_setting_value('JWT_ACCESS_TOKEN_EXPIRES', int, 60 * 5)
