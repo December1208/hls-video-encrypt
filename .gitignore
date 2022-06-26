@@ -10,3 +10,4 @@ assets/
 *.log
 .DS_Store
 .env
+static/

@@ -79,5 +79,8 @@ class Setting(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = load_setting_value('SQLALCHEMY_TRACK_MODIFICATIONS', bool, False)
     TEST_DATA_PATH = load_setting_value('TEST_DATA_PATH', str, 'sample_data')
 
+    ORIGIN_MEDIA_PATH = load_setting_value('MEDIA_PATH', str, 'static/origin_media/')
+    ENCRYPT_MEDIA_PATH = load_setting_value('ENCRYPT_MEDIA_PATH', str, 'static/encrypt_media')
+
 
 setting = Setting()

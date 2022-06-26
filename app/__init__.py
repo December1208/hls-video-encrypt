@@ -9,6 +9,7 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 from app.common.exception import APIException
 from app.common.logging import init_logging_config
 from app.extensions import db, logger
+from app.routers import init_routers
 from app.settings import setting
 
 
@@ -40,11 +41,16 @@ def create_app():
     db.app = _app
     db.init_app(_app)
     init_logging_config(_app)
+    init_routers(_app)
 
     sentry_sdk.init(
         dsn=setting.SENTRY_URI,
         integrations=[FlaskIntegration()]
     )
+    if not os.path.exists(setting.ORIGIN_MEDIA_PATH):
+        os.mkdir(setting.ORIGIN_MEDIA_PATH)
+    if not os.path.exists(setting.ENCRYPT_MEDIA_PATH):
+        os.mkdir(setting.ENCRYPT_MEDIA_PATH)
 
     @_app.errorhandler(Exception)
     def errorhandler(e):
@@ -59,7 +65,7 @@ def create_app():
 
     @_app.teardown_appcontext
     def release_db(response):
-        db.session.close()
+        # db.session.close()
         return response
 
     return _app
