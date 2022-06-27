@@ -65,13 +65,16 @@ class Setting(object):
     TESTING = load_setting_value('TESTING', bool, False)
 
     SENTRY_URI = load_setting_value('SENTRY_URI', str, '')
+    SERVER_HOST = load_setting_value('SERVER_HOST', str, '')
 
     JWT_SECRET_KEY = load_setting_value('JWT_SECRET_KEY', str, 'ddfaac4a33c94806')
     JWT_TOKEN_LOCATION = load_setting_value('JWT_TOKEN_LOCATION', list, ['headers'])
+    JWT_QUERY_STRING_NAME = load_setting_value('JWT_QUERY_STRING_NAME', str, 'token')
+    JWT_QUERY_STRING_VALUE_PREFIX = load_setting_value('JWT_QUERY_STRING_VALUE_PREFIX', str, '')
     JWT_ACCESS_TOKEN_EXPIRES = load_setting_value('JWT_ACCESS_TOKEN_EXPIRES', int, 60 * 5)
     JWT_REFRESH_TOKEN_EXPIRES = load_setting_value('JWT_REFRESH_TOKEN_EXPIRES', int, 60 * 60 * 24 * 7)
     SQLALCHEMY_DATABASE_URI = load_setting_value(
-        'SQLALCHEMY_DATABASE_URI', str, 'postgresql://lintcodesaas:lintcodesaas@localhost:5432/lintcode_saas'
+        'SQLALCHEMY_DATABASE_URI', str, ''
     )
     SQLALCHEMY_ENGINE_OPTIONS = load_setting_value(
         'SQLALCHEMY_ENGINE_OPTIONS', dict, {'pool_size': 10, 'pool_recycle': 3600}
@@ -81,6 +84,12 @@ class Setting(object):
 
     ORIGIN_MEDIA_PATH = load_setting_value('MEDIA_PATH', str, 'static/origin_media/')
     ENCRYPT_MEDIA_PATH = load_setting_value('ENCRYPT_MEDIA_PATH', str, 'static/encrypt_media')
+    STORAGE_BACKEND = load_setting_value('STORAGE_BACKEND', str, 'app.storage_backends.local_backend.LocalBackend')
+
+    # celery 配置
+    CELERY_BROKER_URL = load_setting_value('CELERY_BROKER_URL', str, 'redis://localhost:6379/2')
+    CELERY_RESULT_BACKEND = load_setting_value('CELERY_RESULT_BACKEND', str, 'redis://localhost:6379/3')
+    DEFAULT_CELERY_MAX_RETRIES = load_setting_value('DEFAULT_CELERY_MAX_RETRIES', int, 3)
 
 
 setting = Setting()

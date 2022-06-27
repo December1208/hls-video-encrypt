@@ -1,14 +1,10 @@
-from apps.foundation import db
+from app.extensions import db
 
 
 class BaseModel(db.Model):
     __abstract__ = True
 
     id = db.Column(db.Integer, primary_key=True)
-
-    __app_label__ = ""
-    __model__ = ""
-    __tablename__ = f"{__app_label__}_{__model__}"
 
 
 class Likable(BaseModel):

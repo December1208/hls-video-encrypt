@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>encrypt index</title>
+  </head>
+  <script src="/static/js/hls.js"></script>
+  <body>
+    <video id="video" controls autoplay></video>
+    <script>
+      if (Hls.isSupported()) {
+        var video = document.getElementById('video');
+        var hls = new Hls({
+          cryptoIV: '6176ba14260195338f52bdb6d5bbdb34',
+          cryptoKey: '210e8699cf0040e58f024ec2eb71f8b2',
+        });
+        // bind them together
+        hls.attachMedia(video);
+        hls.loadSource('/static/encrypt_media/f1eb13ba437746ca9098ac8630f73689/jiuzhang.m3u8');
+      }
+    </script>
+  </body>
+</html>

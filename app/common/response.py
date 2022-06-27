@@ -1,6 +1,6 @@
 from typing import Dict, Union, List
 
-from flask import jsonify
+from flask import jsonify, Response
 
 
 def _build_response_data(data=None, page_info=None):
@@ -26,3 +26,7 @@ def standard_response(data: Union[List, Dict] = None, page_info: Dict = None):
     }
 
     return jsonify(response_data), 200
+
+
+def standard_txt_response(data):
+    return data, 200

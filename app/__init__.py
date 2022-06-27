@@ -1,47 +1,56 @@
 import importlib
 import os
-import traceback
 
 import sentry_sdk
 from flask import Flask
+from flask_migrate import Migrate
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from app.common.exception import APIException
 from app.common.logging import init_logging_config
-from app.extensions import db, logger
+from app.error_handler import exception_handler
+from app.extensions import db, logger, jwt_manager
+from app.jwt_callback import expired_token_callback, invalid_token_callback, unauthorized_callback
 from app.routers import init_routers
 from app.settings import setting
 
 
 def get_addons():
-    file_list = os.listdir('./apps')
+    file_list = os.listdir('./app')
     dir_list = []
     for filename in file_list:
-        if os.path.isdir(os.path.join('./apps', filename)):
+        if os.path.isdir(os.path.join('./app', filename)):
             dir_list.append(filename)
     return dir_list
 
 
 def import_models():
     for addon in get_addons():
-        module_path = f'apps.{addon}.models'
+        module_path = f'app.{addon}.models'
         try:
             importlib.import_module(module_path)
         except ModuleNotFoundError:
-            print(f"Not found {addon}")
+            pass
 
 
 def create_app():
 
-    _app = Flask(__name__)
+    _app = Flask(__name__, static_folder='../static', template_folder='../templates')
     _app.config.from_object(setting)
     if setting.TESTING:
         _app.config['SQLALCHEMY_DATABASE_URI'] = f"test_{setting.SQLALCHEMY_DATABASE_URI}"
 
     db.app = _app
     db.init_app(_app)
+    import_models()
     init_logging_config(_app)
     init_routers(_app)
+    Migrate(_app, db)
+    jwt_manager.init_app(_app)
+
+    jwt_manager.expired_token_loader(expired_token_callback)
+    jwt_manager.invalid_token_loader(invalid_token_callback)
+    jwt_manager.unauthorized_loader(unauthorized_callback)
 
     sentry_sdk.init(
         dsn=setting.SENTRY_URI,
@@ -55,17 +64,13 @@ def create_app():
     @_app.errorhandler(Exception)
     def errorhandler(e):
         # raise APIException 不会rollback？
-        db.session.rollback()
 
-        if isinstance(e, APIException):
-            # 截取最后512个字符
-            msg = traceback.format_exc()
-            logger.info(msg[-512:])
-        return e
+        db.session.rollback()
+        return exception_handler(e)
 
     @_app.teardown_appcontext
     def release_db(response):
-        # db.session.close()
+        db.session.close()
         return response
 
     return _app

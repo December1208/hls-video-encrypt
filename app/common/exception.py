@@ -7,6 +7,7 @@ from werkzeug.exceptions import HTTPException
 
 class Error:
     NOT_DEFINED_ERROR = (1001, "服务器开小差了，请稍后再试")
+    INVALID_TOKEN_ERROR = (1002, "无效的token")
 
 
 class APIException(HTTPException):

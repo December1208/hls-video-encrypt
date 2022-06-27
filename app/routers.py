@@ -1,4 +1,4 @@
-from app.hls_video.api import video_api
+from app.hls_video.apis.public_api import video_api
 
 
 def init_routers(app):

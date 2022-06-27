@@ -10,4 +10,5 @@ assets/
 *.log
 .DS_Store
 .env
-static/
+static/encrypt_media
+static/origin_media
