@@ -36,5 +36,5 @@ TS_FFMPEG_CMD = [
     '-s:2', '1280x720', '-c:v', 'libx264', '-b:v:1', '2000k', '-c:a', 'aac', '-b:a:1', '128k',
     '-s:4', '720x480', '-c:v', 'libx264', '-b:v:2', '800k', '-c:a', 'aac', '-b:a:2', '128k',
     '-map', '0:v', '-map', '0:a', '-map', '0:v', '-map', '0:a', '-map', '0:v', '-map', '0:a', '-f', 'hls',
-    '-hls_time', '10', '-hls_list_size', '0', '-hls_playlist_type', 'vod', '-var_stream_map', 'v:0,a:0 v:1,a:1 v:2,a:2',
+    '-hls_time', '180', '-hls_list_size', '0', '-hls_playlist_type', 'vod', '-var_stream_map', 'v:0,a:0 v:1,a:1 v:2,a:2',
 ]
