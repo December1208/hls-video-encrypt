@@ -16,7 +16,6 @@ from app.settings import setting
 from flask_jwt_extended.utils import get_jti
 from app.util.aes_crypt import AESCrypt
 from flask_jwt_extended import create_access_token
-from tempfile import NamedTemporaryFile
 
 
 video_api = Blueprint('video-api', __name__)
@@ -92,11 +91,16 @@ def _update_jwt():
     return response.standard_txt_response(create_access_token("123"))
 
 
-@video_api.route('/video/origin-demo/', methods=['GET'])
+@video_api.route('/video/origin-demo', methods=['GET'])
 def _origin_demo():
     return render_template('origin_demo.html')
 
 
-@video_api.route('/video/encrypt-demo/', methods=['GET'])
+@video_api.route('/video/encrypt-demo', methods=['GET'])
 def _encrypt_demo():
     return render_template('encrypt_demo.html')
+
+
+@video_api.route('/video/upload', methods=['GET'])
+def _uplaod():
+    return render_template('upload.html')

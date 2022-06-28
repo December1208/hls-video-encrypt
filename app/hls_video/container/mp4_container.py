@@ -1,6 +1,6 @@
-import bitstring
 import os
 
+import bitstring
 import ffmpy
 
 from app.hls_video import constants
@@ -40,20 +40,23 @@ class MP4Container:
         ff.run()
         return index_file
 
-    def to_ts_segment(self, file_prefix, key, iv):
+    def to_ts_segment(self, file_prefix, key: bytes, iv: bytes):
         # general ts segment and index file in the current directory
 
         outputs_cmd = constants.TS_FFMPEG_CMD
-        master_file = f'{file_prefix}_master.m3u8'
-        index_file = os.path.join(self.save_path, f'{file_prefix}%v.m3u8')
+        index_file = os.path.join(self.save_path, f'{file_prefix}_index.m3u8')
+        with open(os.path.join(self.save_path, 'enc.key'), 'wb') as f:
+            f.write(key)
+        with open(os.path.join(self.save_path, 'key.keyinfo'), 'w') as f:
+            f.writelines(
+                [f"url\n", f"{os.path.join(self.save_path, 'enc.key')}\n", iv.hex()]
+            )
 
-        outputs_cmd.extend([index_file, '-master_pl_name', master_file, '-master_pl_name', master_file])
         outputs_cmd.extend([
-            "-hls_enc_key", key, '-hls_enc_key_url', "url", "-hls_enc_iv", iv
+            "-hls_key_info_file", os.path.join(self.save_path, 'key.keyinfo')
         ])
-
         outputs_cmd.extend([
-            '-hls_segment_filename', f"{os.path.join(self.save_path, file_prefix)}%d.ts",
+            '-hls_segment_filename', f"{os.path.join(self.save_path, file_prefix)}%d.ts"
         ])
         ff = ffmpy.FFmpeg(
             inputs={self.filename: None},
@@ -61,3 +64,25 @@ class MP4Container:
         )
         ff.run()
         return index_file
+
+    def multi_bit_rate_to_ts_segment(self, file_prefix, key: bytes, iv: bytes):
+        outputs_cmd = constants.MULTI_BIT_RATE_TS_FFMPEG_CMD
+        master_file = os.path.join(self.save_path, 'master.m3u8')
+        index_file = os.path.join(self.save_path, f'{file_prefix}_%v.m3u8')
+        with open(os.path.join(self.save_path, 'enc.key'), 'wb') as f:
+            f.write(key)
+        with open(os.path.join(self.save_path, 'key.keyinfo'), 'w') as f:
+            f.writelines(
+                [f"url\n", f"{os.path.join(self.save_path, 'enc.key')}\n", iv.hex()]
+            )
+
+        outputs_cmd.extend([
+            "-hls_key_info_file", os.path.join(self.save_path, 'key.keyinfo'), '-master_pl_name', master_file
+        ])
+        ff = ffmpy.FFmpeg(
+            inputs={self.filename: None},
+            outputs={index_file: outputs_cmd}
+        )
+        ff.run()
+
+        return os.path.join(self.save_path, master_file)

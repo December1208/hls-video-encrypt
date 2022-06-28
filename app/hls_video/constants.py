@@ -30,11 +30,16 @@ TS_RESOLUTION_TYPE_TO_FFMPEG_CMD = {
 }
 
 
-# 多码率生成ts
-TS_FFMPEG_CMD = [
+# 多码率生成TS，命令有点问题
+MULTI_BIT_RATE_TS_FFMPEG_CMD = [
     '-s:0', '1920x1080', '-c:v', 'libx264', '-b:v:0', '6000k', '-c:a', 'aac', '-b:a:0', '128k',
     '-s:2', '1280x720', '-c:v', 'libx264', '-b:v:1', '2000k', '-c:a', 'aac', '-b:a:1', '128k',
     '-s:4', '720x480', '-c:v', 'libx264', '-b:v:2', '800k', '-c:a', 'aac', '-b:a:2', '128k',
     '-map', '0:v', '-map', '0:a', '-map', '0:v', '-map', '0:a', '-map', '0:v', '-map', '0:a', '-f', 'hls',
     '-hls_time', '180', '-hls_list_size', '0', '-hls_playlist_type', 'vod', '-var_stream_map', 'v:0,a:0 v:1,a:1 v:2,a:2',
+]
+
+# 只转TS
+TS_FFMPEG_CMD = [
+    '-f', 'hls', '-hls_time', '60', '-hls_list_size', '0', '-hls_playlist_type', 'vod'
 ]
