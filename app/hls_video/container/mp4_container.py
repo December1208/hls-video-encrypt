@@ -20,8 +20,10 @@ class MP4Container:
 
         self.filename = filename
         self.save_path = os.path.join(setting.ENCRYPT_MEDIA_PATH, self.identity)
-        if not os.path.exists(self.save_path):
-            os.mkdir(self.save_path)
+
+        if os.path.exists(self.save_path):
+            os.rmdir(self.save_path)
+        os.mkdir(self.save_path)
 
     def to_flv_segment(self, video_resolution, file_prefix, index_file_type=constants.ContainerType.M3U8):
         # general flv segment and index file in the current directory
@@ -67,7 +69,7 @@ class MP4Container:
 
     def multi_bit_rate_to_ts_segment(self, file_prefix, key: bytes, iv: bytes):
         outputs_cmd = constants.MULTI_BIT_RATE_TS_FFMPEG_CMD
-        master_file = os.path.join(self.save_path, 'master.m3u8')
+        master_file = 'master.m3u8'
         index_file = os.path.join(self.save_path, f'{file_prefix}_%v.m3u8')
         with open(os.path.join(self.save_path, 'enc.key'), 'wb') as f:
             f.write(key)

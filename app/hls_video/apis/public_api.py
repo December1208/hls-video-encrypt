@@ -1,10 +1,11 @@
-import importlib
 import os
 import uuid
 from typing import Optional
 
 from flask import Blueprint, request, render_template
+from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended.utils import get_jti
 from werkzeug.exceptions import NotFound
 
 from app.common import response
@@ -13,10 +14,7 @@ from app.hls_video.constants import IndexType
 from app.hls_video.models import HLSVideo
 from app.hls_video.service import VideoService
 from app.settings import setting
-from flask_jwt_extended.utils import get_jti
 from app.util.aes_crypt import AESCrypt
-from flask_jwt_extended import create_access_token
-
 
 video_api = Blueprint('video-api', __name__)
 
@@ -30,7 +28,7 @@ def allowed_file(filename):
 
 @video_api.route('/video/upload', methods=['POST'])
 def _upload():
-    from app.tasks import hls_video
+    from app.tasks import hls_video as hls_video_tasks
 
     file = request.files['file']
     if file is None or not allowed_file(file.filename):
@@ -39,7 +37,14 @@ def _upload():
     identity = uuid.uuid4().hex
     file_path = os.path.join(setting.ORIGIN_MEDIA_PATH, f"{identity}.{file.filename.split('.')[-1]}")
     file.save(file_path)
-    hls_video.convert_mp4_to_m3u.delay(identity, file_path)
+    hls_video_ins = HLSVideo(
+        identity=identity,
+        origin_file_path=file_path,
+        filename=file.filename,
+    )
+    db.session.add(hls_video_ins)
+    db.session.commit()
+    hls_video_tasks.convert_mp4_to_m3u.delay(identity, file_path)
     return response.standard_response()
 
 

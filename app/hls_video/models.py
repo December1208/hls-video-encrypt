@@ -3,9 +3,8 @@ from app.extensions import db
 
 
 class HLSVideo(BaseModel):
+    filename = db.Column(db.String(128), doc="上传时的文件名")
     identity = db.Column(db.String(32), index=True, nullable=False, doc="文件唯一标识")
-    content = db.Column(db.Text, doc="文件内容")
-    index_type = db.Column(db.String(32), doc="索引文件类型")
     origin_file_path = db.Column(db.Text, doc="加密前文件地址")
     file_path = db.Column(db.Text, doc="加密后文件地址")
 
