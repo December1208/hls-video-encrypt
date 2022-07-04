@@ -2,13 +2,14 @@ import os
 from urllib.parse import urljoin
 
 import m3u8
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, decode_token
 from m3u8 import Playlist, Key, Segment
 from werkzeug.exceptions import NotFound
 
 from app.hls_video.constants import IndexType
 from app.hls_video.models import HLSVideo
 from app.settings import setting
+from app.util.aes_crypt import AESCrypt
 
 
 class VideoService:
@@ -16,12 +17,12 @@ class VideoService:
     @classmethod
     def get_video_public_uri(cls, identity, filename, token):
 
-        public_uri = urljoin(setting.SERVER_HOST, f'api/video/{identity}/{filename}') + f'?token={token}'
+        public_uri = f"{filename}?token={token}"
         return public_uri
 
     @classmethod
     def get_video_static_uri(cls, identity, filename):
-        static_uri = urljoin(setting.SERVER_HOST, f'/static/{filename}')
+        static_uri = urljoin(setting.SERVER_HOST, f'/{setting.ENCRYPT_MEDIA_PATH}/{identity}/{filename}')
         return static_uri
 
     @classmethod
@@ -50,8 +51,12 @@ class VideoService:
         return play_list.dumps()
 
     @classmethod
-    def parse_segment_content(cls, hls_video: HLSVideo):
-        if hls_video.index_type != IndexType.SEGMENT:
-            raise
-        play_list = m3u8.loads(hls_video)
-        return hls_video.content
+    def parse_key_info(cls, identity, filename, token):
+        payload = decode_token(token)
+        key, iv = payload['key'], payload['iv']
+        file_path = os.path.join(setting.ENCRYPT_MEDIA_PATH, identity, filename)
+        with open(file_path, 'rb') as f:
+            data = f.read()
+        aes_crypt = AESCrypt(key=bytes.fromhex(key), iv=bytes.fromhex(iv))
+        result = aes_crypt.encrypt(data)
+        return result

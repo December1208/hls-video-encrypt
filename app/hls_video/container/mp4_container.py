@@ -75,7 +75,7 @@ class MP4Container:
             f.write(key)
         with open(os.path.join(self.save_path, 'key.keyinfo'), 'w') as f:
             f.writelines(
-                [f"url\n", f"{os.path.join(self.save_path, 'enc.key')}\n", iv.hex()]
+                [f"enc.key\n", f"{os.path.join(self.save_path, 'enc.key')}\n", iv.hex()]
             )
 
         outputs_cmd.extend([
@@ -87,4 +87,4 @@ class MP4Container:
         )
         ff.run()
 
-        return os.path.join(self.save_path, master_file)
+        return master_file

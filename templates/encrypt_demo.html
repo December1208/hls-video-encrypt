@@ -6,18 +6,24 @@
   </head>
   <script src="/static/js/hls.js"></script>
   <body>
-    <video id="video" controls autoplay></video>
-    <script>
+  <div class="url-input">
+      <label for="sURL">Stream URL:</label>
+      <input id="sURL" type="text" value="http://127.0.0.1/flv/7182741-1.flv" />
+      <button onclick="switch_mds()">Switch to MediaDataSource</button>
+  </div>
+  <video id="video" controls autoplay></video>
+  <script>
       if (Hls.isSupported()) {
-        var video = document.getElementById('video');
-        var hls = new Hls({
-          cryptoIV: '6176ba14260195338f52bdb6d5bbdb34',
-          cryptoKey: '210e8699cf0040e58f024ec2eb71f8b2',
-        });
-        // bind them together
-        hls.attachMedia(video);
-        hls.loadSource('/static/encrypt_media/f1eb13ba437746ca9098ac8630f73689/jiuzhang.m3u8');
+          var video = document.getElementById('video');
+          var hls = new Hls();
+          // bind them together
+          hls.attachMedia(video);
+          {#hls.loadSource('');#}
       }
+      function switch_media() {
+          var url = document.getElementById('sURL');
+          hls.loadSource(url)
+        }
     </script>
   </body>
 </html>

@@ -1,3 +1,4 @@
+import asyncio
 import os
 import uuid
 from typing import Optional
@@ -5,12 +6,12 @@ from typing import Optional
 from flask import Blueprint, request, render_template
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended.utils import get_jti
+from flask_jwt_extended.utils import get_jti, decode_token
 from werkzeug.exceptions import NotFound
 
 from app.common import response
 from app.extensions import db
-from app.hls_video.constants import IndexType
+from app.hls_video.constants import IndexType, ContainerType
 from app.hls_video.models import HLSVideo
 from app.hls_video.service import VideoService
 from app.settings import setting
@@ -29,6 +30,7 @@ def allowed_file(filename):
 @video_api.route('/video/upload', methods=['POST'])
 def _upload():
     from app.tasks import hls_video as hls_video_tasks
+    # from app.async_task.hls_video import convert_mp4_to_m3u
 
     file = request.files['file']
     if file is None or not allowed_file(file.filename):
@@ -39,27 +41,43 @@ def _upload():
     file.save(file_path)
     hls_video_ins = HLSVideo(
         identity=identity,
-        origin_file_path=file_path,
+        origin_file_path=f"{identity}.{file.filename.split('.')[-1]}",
         filename=file.filename,
     )
     db.session.add(hls_video_ins)
     db.session.commit()
     hls_video_tasks.convert_mp4_to_m3u.delay(identity, file_path)
+    # asyncio.run(convert_mp4_to_m3u(identity, file_path))
     return response.standard_response()
 
 
-@video_api.route('/video/<string:identity>.m3u8', methods=['GET'])
-@jwt_required()
-def _get_video_content(identity):
-
-    hls_video: Optional[HLSVideo] = db.session.query(HLSVideo).filter(HLSVideo.uuid == identity).first()
+@video_api.route('/video/<string:identity>', methods=['GET'])
+def _get_video_detail(identity):
+    hls_video: Optional[HLSVideo] = db.session.query(HLSVideo).filter(HLSVideo.identity == identity).first()
     if hls_video is None:
         raise NotFound
-    if hls_video.index_type == IndexType.PLAYLIST:
-        result = VideoService.parse_playlist_content(hls_video)
-    elif hls_video.index_type == IndexType.SEGMENT:
-        result = VideoService.parse_segment_content(hls_video)
+
+    token = create_access_token(identity=identity)
+    public_uri = VideoService.get_video_public_uri(identity, hls_video.file_path, token)
+    return response.standard_response({'public_uri': public_uri})
+
+
+@video_api.route('/video/<string:identity>/<string:filename>', methods=['GET'])
+@jwt_required()
+def _get_video_content(identity, filename):
+    params = request.args.to_dict()
+    print(filename)
+    if filename.endswith(ContainerType.M3U8):
+        hls_video: Optional[HLSVideo] = db.session.query(HLSVideo).filter(HLSVideo.identity == identity).first()
+        if hls_video is None:
+            print('not found')
+            raise NotFound
+        result = VideoService.parse_playlist_content(identity, filename)
+    elif filename.endswith(ContainerType.KEY):
+        token = params['token']
+        result = VideoService.parse_key_info(identity, filename, token)
     else:
+        print('not found 2')
         raise NotFound
 
     return response.standard_txt_response(result)

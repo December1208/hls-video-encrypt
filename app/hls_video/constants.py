@@ -9,6 +9,7 @@ class ContainerType:
     MP4 = 'mp4'
     M3U8 = 'm3u8'
     JSON = 'json'
+    KEY = 'key'
 
 
 class VideoResolution:

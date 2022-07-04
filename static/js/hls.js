@@ -18093,21 +18093,6 @@ var KeyLoader = /*#__PURE__*/function () {
     this.fastKey = null;
     this.hls = hls;
 
-    if (this.hls.config.cryptoKey && this.hls.config.cryptoIV) {
-      _utils_logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('set cryptoKey and cryptoIV');
-      var iv = new Uint8Array( // @ts-ignore
-      this.hls.config.cryptoIV.match(/[\da-f]{2}/gi).map(function (h) {
-        return parseInt(h, 16);
-      }));
-      var key = new Uint8Array( // @ts-ignore
-      this.hls.config.cryptoKey.match(/[\da-f]{2}/gi).map(function (h) {
-        return parseInt(h, 16);
-      }));
-      this.aes_crypto = new _crypt_aes_crypto__WEBPACK_IMPORTED_MODULE_3__["default"](self.crypto.subtle, iv);
-      this.subtle = self.crypto.subtle || self.crypto.webkitSubtle;
-      this.fastKey = new _crypt_fast_aes_key__WEBPACK_IMPORTED_MODULE_4__["default"](this.subtle, key);
-    }
-
     this._registerListeners();
   }
 
@@ -18165,6 +18150,26 @@ var KeyLoader = /*#__PURE__*/function () {
       var fragLoader = frag.loader = this.loaders[type] = new Loader(config);
       this.decrypturl = uri;
       this.decryptkey = null;
+      var parsedUrl = new URL(uri);
+      var searchParams = new URLSearchParams(parsedUrl.search);
+      var token = searchParams.get('token');
+
+      if (token !== null) {
+        var decodedData = JSON.parse(self.atob(token.split(".")[1]));
+        _utils_logger__WEBPACK_IMPORTED_MODULE_2__["logger"].info('set cryptoKey and cryptoIV');
+        var iv = new Uint8Array( // @ts-ignore
+        decodedData.iv.match(/[\da-f]{2}/gi).map(function (h) {
+          return parseInt(h, 16);
+        }));
+        var key = new Uint8Array( // @ts-ignore
+        decodedData.key.match(/[\da-f]{2}/gi).map(function (h) {
+          return parseInt(h, 16);
+        }));
+        this.aes_crypto = new _crypt_aes_crypto__WEBPACK_IMPORTED_MODULE_3__["default"](self.crypto.subtle, iv);
+        this.subtle = self.crypto.subtle || self.crypto.webkitSubtle;
+        this.fastKey = new _crypt_fast_aes_key__WEBPACK_IMPORTED_MODULE_4__["default"](this.subtle, key);
+      }
+
       var loaderContext = {
         url: uri,
         frag: frag,

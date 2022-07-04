@@ -10,7 +10,7 @@ from app.common.exception import APIException
 from app.common.logging import init_logging_config
 from app.error_handler import exception_handler
 from app.extensions import db, logger, jwt_manager
-from app.jwt_callback import expired_token_callback, invalid_token_callback, unauthorized_callback
+from app.jwt_callback import expired_token_callback, invalid_token_callback, unauthorized_callback, user_claims_callback
 from app.routers import init_routers
 from app.settings import setting
 
@@ -51,11 +51,12 @@ def create_app():
     jwt_manager.expired_token_loader(expired_token_callback)
     jwt_manager.invalid_token_loader(invalid_token_callback)
     jwt_manager.unauthorized_loader(unauthorized_callback)
+    jwt_manager.additional_claims_loader(user_claims_callback)
 
-    sentry_sdk.init(
-        dsn=setting.SENTRY_URI,
-        integrations=[FlaskIntegration()]
-    )
+    # sentry_sdk.init(
+    #     dsn=setting.SENTRY_URI,
+    #     integrations=[FlaskIntegration()]
+    # )
     if not os.path.exists(setting.ORIGIN_MEDIA_PATH):
         os.mkdir(setting.ORIGIN_MEDIA_PATH)
     if not os.path.exists(setting.ENCRYPT_MEDIA_PATH):
