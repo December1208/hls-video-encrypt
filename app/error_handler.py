@@ -26,4 +26,5 @@ def exception_handler(e):
         msg = traceback.format_exc()
         logger.info(msg[-512:])
         return e
+    logger.exception(e)
     return e

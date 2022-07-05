@@ -6,8 +6,6 @@ from flask_jwt_extended import create_access_token, decode_token
 from m3u8 import Playlist, Key, Segment
 from werkzeug.exceptions import NotFound
 
-from app.hls_video.constants import IndexType
-from app.hls_video.models import HLSVideo
 from app.settings import setting
 from app.util.aes_crypt import AESCrypt
 
@@ -15,9 +13,11 @@ from app.util.aes_crypt import AESCrypt
 class VideoService:
 
     @classmethod
-    def get_video_public_uri(cls, identity, filename, token):
-
+    def get_video_public_uri(cls, identity, filename, token, only_token=True):
         public_uri = f"{filename}?token={token}"
+
+        if not only_token:
+            public_uri = f"/api/video/{identity}/{public_uri}"
         return public_uri
 
     @classmethod

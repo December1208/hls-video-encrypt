@@ -65,7 +65,7 @@ class Setting(object):
     TESTING = load_setting_value('TESTING', bool, False)
 
     SENTRY_URI = load_setting_value('SENTRY_URI', str, '')
-    SERVER_HOST = load_setting_value('SERVER_HOST', str, '127.0.0.1:5000/')
+    SERVER_HOST = load_setting_value('SERVER_HOST', str, 'http://127.0.0.1:5000/')
 
     JWT_SECRET_KEY = load_setting_value('JWT_SECRET_KEY', str, 'ddfaac4a33c94806')
     JWT_TOKEN_LOCATION = load_setting_value('JWT_TOKEN_LOCATION', list, ['headers'])

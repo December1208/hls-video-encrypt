@@ -1,4 +1,4 @@
-import asyncio
+import os
 import os
 import uuid
 from typing import Optional
@@ -6,16 +6,14 @@ from typing import Optional
 from flask import Blueprint, request, render_template
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
-from flask_jwt_extended.utils import get_jti, decode_token
 from werkzeug.exceptions import NotFound
 
 from app.common import response
 from app.extensions import db
-from app.hls_video.constants import IndexType, ContainerType
+from app.hls_video.constants import ContainerType
 from app.hls_video.models import HLSVideo
 from app.hls_video.service import VideoService
 from app.settings import setting
-from app.util.aes_crypt import AESCrypt
 
 video_api = Blueprint('video-api', __name__)
 
@@ -58,7 +56,8 @@ def _get_video_detail(identity):
         raise NotFound
 
     token = create_access_token(identity=identity)
-    public_uri = VideoService.get_video_public_uri(identity, hls_video.file_path, token)
+    public_uri = VideoService.get_video_public_uri(identity, hls_video.file_path, token, False)
+    public_uri = setting.SERVER_HOST.strip('/') + public_uri
     return response.standard_response({'public_uri': public_uri})
 
 
@@ -81,37 +80,6 @@ def _get_video_content(identity, filename):
         raise NotFound
 
     return response.standard_txt_response(result)
-
-
-@video_api.route('/video/<string:identity>/<string:file_name>', methods=['GET'])
-@jwt_required()
-def _get_video_key(identity, file_name):
-    params = request.args.to_dict()
-    token = params['token']
-
-    # hls_video: Optional[HLSVideo] = db.session.query(HLSVideo).filter(HLSVideo.uuid == identity).first()
-    # if hls_video is None:
-    #     raise NotFound
-
-    jti = get_jti(token)
-    jti = jti.replace('-', '')
-    # iv = os.urandom(16)
-    iv = b'av\xba\x14&\x01\x953\x8fR\xbd\xb6\xd5\xbb\xdb4'
-    print(iv.hex())
-    # iv = "d354f157e301478e1224e846883a6aff"
-    # print(jti, iv.hex())
-    # key, iv = hls_video.key, hls_video.iv
-    file = 'static/encrypt_media/f1eb13ba437746ca9098ac8630f73689/test.key'
-    with open(file, 'rb') as f:
-        data = f.read()
-    aes_crypt = AESCrypt(key=bytes.fromhex(jti), iv=iv)
-    result = aes_crypt.encrypt(data)
-    return response.standard_txt_response(result)
-
-
-@video_api.route('/video/', methods=['POST'])
-def _update_jwt():
-    return response.standard_txt_response(create_access_token("123"))
 
 
 @video_api.route('/video/origin-demo', methods=['GET'])

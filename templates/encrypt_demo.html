@@ -9,7 +9,7 @@
   <div class="url-input">
       <label for="sURL">Stream URL:</label>
       <input id="sURL" type="text" value="http://127.0.0.1/flv/7182741-1.flv" />
-      <button onclick="switch_mds()">Switch to MediaDataSource</button>
+      <button onclick="switch_media()">Switch to MediaDataSource</button>
   </div>
   <video id="video" controls autoplay></video>
   <script>
@@ -21,7 +21,8 @@
           {#hls.loadSource('');#}
       }
       function switch_media() {
-          var url = document.getElementById('sURL');
+          var url = document.getElementById('sURL').value;
+          console.log(url)
           hls.loadSource(url)
         }
     </script>
