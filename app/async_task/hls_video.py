@@ -1,4 +1,3 @@
-import asyncio
 import os
 from typing import Optional
 
@@ -11,7 +10,7 @@ from asynctask.asynctask import async_task
 
 
 @async_task
-async def convert_mp4_to_m3u(identity, file_path):
+def convert_mp4_to_m3u(identity, file_path):
     key = os.urandom(16)
     iv = os.urandom(16)
     hls_video: Optional[HLSVideo] = db.session.query(HLSVideo).filter(HLSVideo.identity == identity).first()

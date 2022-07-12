@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
 </head>
 <body>
-    <form id="upload-form" action="http://127.0.0.1:5000/api/video/upload" method="post" enctype="multipart/form-data" >
-    　　　<input type="file" id="upload" name="file" /> <br />
-    　　　<input type="submit" value="Upload" />
+    <form action="http://127.0.0.1:5000/api/video/upload" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="exampleInputFile">File input</label>
+            <input type="file" id="exampleInputFile" name="file">
+            <p class="help-block">Example block-level help text here.</p>
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
     </form>
 </body>
 </html>

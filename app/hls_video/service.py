@@ -13,7 +13,10 @@ from app.util.aes_crypt import AESCrypt
 class VideoService:
 
     @classmethod
-    def get_video_public_uri(cls, identity, filename, token, only_token=True):
+    def get_video_public_uri(cls, identity, filename, token=None, only_token=True):
+        if not token:
+            token = create_access_token(identity)
+
         public_uri = f"{filename}?token={token}"
 
         if not only_token:
