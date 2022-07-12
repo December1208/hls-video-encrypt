@@ -100,11 +100,9 @@ def _upload_template():
 
 @video_api.route('/video-list/', methods=['GET'])
 def _video_list():
-    queryset = db.session.query(HLSVideo).filter(
-        HLSVideo.transcoding_finished.is_(True)
-    ).order_by(HLSVideo.id.desc())
+    queryset = db.session.query(HLSVideo).order_by(HLSVideo.id.desc())
     result = [
-        {"name": item.filename, "url": f"/api/video/encrypt-demo?identity={item.identity}"}
+        {"name": item.filename, "url": f"/api/video/encrypt-demo?identity={item.identity}", 'transcoding_finished': item.transcoding_finished}
         for item in queryset
     ]
     return render_template('video_list.html', video_list=result)

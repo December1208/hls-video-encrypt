@@ -11,11 +11,19 @@
         <tr>
             <th>文件名</th>
             <th>播放地址</th>
+            <th>是否转码完成</th>
         </tr>
         {% for video in video_list %}
         <tr>
             <td>{{ video.name }}</td>
-            <td><a href="{{ video.url }}" target="view_window">点击播放</a></td>
+            <td>
+                {% if video.transcoding_finished %}
+                <a href="{{ video.url }}" target="view_window">点击播放</a>
+                {% else %}
+                <a href="">无法播放</a>
+                {% endif %}
+            </td>
+            <td>{% if video.transcoding_finished %} 已完成 {% else %} 未完成 {% endif %}</td>
         </tr>
         {% endfor %}
     </table>
