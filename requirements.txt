@@ -8,10 +8,10 @@ bitstring==3.1.9
 blinker==1.4
 cached-property==1.5.2
 celery==5.2.7
-certifi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_83242e7e-f82d-4a71-8ef2-9d71d212d249gu_wxmeq/croots/recipe/certifi_1655968827803/work/certifi
+certifi==2022.6.15
 cffi==1.15.0
 charset-normalizer==2.0.12
-click @ file:///opt/concourse/worker/volumes/live/42b55757-67b9-4a67-4429-e65a7264b929/volume/click_1646056605766/work
+click==8.0.4
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.2.0
@@ -21,23 +21,23 @@ Deprecated==1.2.13
 dnspython==2.2.1
 eventlet==0.33.1
 ffmpy==0.3.0
-Flask @ file:///opt/conda/conda-bld/flask_1648041541647/work
+Flask==2.0.3
 Flask-JWT-Extended==4.4.1
 Flask-Migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.2
 idna==3.3
-importlib-metadata @ file:///opt/concourse/worker/volumes/live/4e1a3384-472f-4bcb-7776-cb0076aaea40/volume/importlib-metadata_1648562431336/work
+importlib-metadata==4.11.3
 importlib-resources==5.8.0
 ipython==7.34.0
 iso8601==1.0.2
-itsdangerous @ file:///tmp/build/80754af9/itsdangerous_1621432558163/work
+itsdangerous==2.0.1
 jedi==0.18.1
-Jinja2 @ file:///opt/conda/conda-bld/jinja2_1647436528585/work
+Jinja2==3.0.3
 kombu==5.2.4
 m3u8==2.0.0
 Mako==1.2.0
-MarkupSafe @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_d4a9444f-bd4c-4043-b47d-cede33979b0fve7bm42r/croots/recipe/markupsafe_1654597878200/work
+MarkupSafe==2.1.1
 matplotlib-inline==0.1.3
 Naked==0.1.31
 packaging==21.3
@@ -63,10 +63,10 @@ six==1.16.0
 SQLAlchemy==1.4.38
 toml==0.10.2
 traitlets==5.3.0
-typing_extensions @ file:///opt/conda/conda-bld/typing_extensions_1647553014482/work
+typing_extensions==3.1.1
 urllib3==1.26.9
 vine==5.0.0
 wcwidth==0.2.5
-Werkzeug @ file:///opt/conda/conda-bld/werkzeug_1645628268370/work
+Werkzeug==2.0.3
 wrapt==1.14.1
-zipp @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_b279673d-f037-44c7-8773-c5a6b6f51037d3wfr9cq/croots/recipe/zipp_1652341773612/work
+zipp==3.8.0
